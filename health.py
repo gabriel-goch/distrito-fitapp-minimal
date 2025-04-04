@@ -1,10 +1,11 @@
-from flask import Blueprint
+# health.py
+from flask import Flask
 
-health_bp = Blueprint('health', __name__)
+health_app = Flask(__name__)
 
-@health_bp.route('/health')
-def health_check():
+@health_app.route('/health')
+def health():
     return "OK", 200
 
-def register_health_routes(app):
-    app.register_blueprint(health_bp)
+if __name__ == "__main__":
+    health_app.run(host="0.0.0.0", port=5000)
