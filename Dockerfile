@@ -1,28 +1,19 @@
 FROM python:3.9-slim
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
-
-# Configurar directorio de trabajo
 WORKDIR /app
 
-# Copiar requirements.txt
 COPY requirements.txt .
+COPY health.py .
 
-# Instalar dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir flask gunicorn
 
-# Copiar el código de la aplicación
-COPY . .
-
-# Configuración de variables de entorno
 ENV PORT=5000
 ENV PYTHONUNBUFFERED=1
 
-# Exponer el puerto
+EXPOSE 5000
+
+# Comando más simple posible
+CMD exec gunicorn --bind 0.0.0.0:$PORT --timeout 300 --workers 1 health:health_app
 EXPOSE 5000
 
 # Iniciar la aplicación
